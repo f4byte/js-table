@@ -4,19 +4,24 @@ let employees = [
     { id: 102050, name: "Anindya", username: "haq.mawla", address: "Mdpur", email: "anindya.sct@gmail.com" }
 ];
 
+// Email validation (regex)
+function isValidEmail(email) {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+    return emailRegex.test(email);
+}
 function showEmployees() {
-     // my container
+    // my container
     const div = document.getElementById("container");
     div.innerHTML = "";
     div.style.display = "inline-block";
-    
+
     const table = document.createElement("table");
     table.style.width = "100%";
     table.style.borderCollapse = "collapse";
     table.style.fontFamily = "Roboto";
-    console.log('Fahim`s', table); 
+    console.log('Fahim`s', table);
 
-     // Add button
+    // Add button
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
     addButton.id = "addButton";
@@ -27,12 +32,12 @@ function showEmployees() {
     addButton.style.borderRadius = "5px";
 
     const buttonContainer = document.createElement("div");
-    buttonContainer.style.textAlign = "right";
+    buttonContainer.style.textAlign = "right"; 
     buttonContainer.style.marginBottom = "10px";
     buttonContainer.appendChild(addButton);
 
 
-     // table header
+    // table header
     table.innerHTML = `
         <thead>
             <tr>
@@ -46,7 +51,7 @@ function showEmployees() {
         </thead>
         `;
 
-     // border
+    // border
     table.querySelectorAll("th, td").forEach(function (cell) {
         cell.style.border = "1px solid ";
         cell.style.padding = "10px";
@@ -54,81 +59,87 @@ function showEmployees() {
         cell.style.textAlign = "left";
     });
 
-     // body
+    // body
     const tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
 
-     // rows 
+    // rows 
     employees.forEach(function (emp) {
         const row = document.createElement("tr");
-        
-          // 
-          //     
-          //     
-          // 
-          ["id","name","username","address","email"].forEach(function(key) {
+
+        // 
+        //     
+        //     
+        // 
+        ["id", "name", "username", "address", "email"].forEach(function (key) {
             const td = document.createElement("td");
             td.textContent = emp[key];
             row.appendChild(td);
-          });
-          
-            const action = document.createElement("td");
-            const editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-            editButton.style.marginRight ="5px";
-
-            editButton.onclick = function() {
-
-                const name = prompt ("Enter name:", emp.name);
-                if(name === null) return;
-
-                const username = prompt ("Enter username:", emp.username);
-                if(username === null)return;
-
-                const address = prompt ("Enter Address:", emp.address);
-                if (address === null) return;
-                             
-                const email = prompt ("Enter Email:", emp.email);
-                if (email === null) return;
-
-                emp.name = name;
-                emp.username = username;
-                emp.address = address;
-                emp.email = email;
-                
-                showEmployees();
-            };
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-
-            deleteButton.onclick = function () {
-                if (confirm("Are you sure you want to delete this user?")) {
-                employees = employees.filter(u => u.id !== emp.id);
-                showEmployees();
-                }
-            };
-
-            action.appendChild(editButton);
-            action.appendChild(deleteButton);
-            row.appendChild(action);
-            tbody.appendChild(row);
         });
 
-     // cell
-     table.querySelectorAll("th, td").forEach(function (cell) {
+        const action = document.createElement("td");
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.style.marginRight = "5px";
+
+        editButton.onclick = function () {
+
+            const name = prompt("Enter name:", emp.name);
+            if (name === null) return;
+
+            const username = prompt("Enter username:", emp.username);
+            if (username === null) return;
+
+            const address = prompt("Enter Address:", emp.address);
+            if (address === null) return;
+
+            const email = prompt("Enter Email:", emp.email);
+            if (email === null) return;
+            
+            if (!isValidEmail(email.trim())) {
+                alert("Invalid email address. Please enter a valid email (e.g. name@example.com).");
+                return;
+            }
+
+
+            emp.name = name;
+            emp.username = username;
+            emp.address = address;
+            emp.email = email.trim();
+
+            showEmployees();
+        };
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+
+        deleteButton.onclick = function () {
+            if (confirm("Are you sure you want to delete this user?")) {
+                employees = employees.filter(u => u.id !== emp.id);
+                showEmployees();
+            }
+        };
+
+        action.appendChild(editButton);
+        action.appendChild(deleteButton);
+        row.appendChild(action);
+        tbody.appendChild(row);
+    });
+
+    // cell
+    table.querySelectorAll("th, td").forEach(function (cell) {
         cell.style.border = "1px solid black";
         cell.style.padding = "10px";
         cell.style.textAlign = "left";
-    });       
+    });
     table.querySelectorAll("th").forEach(function (th) {
         th.style.backgroundColor = "#0000003f";
     });
 
-     // new employee
-        addButton.onclick = function (e) {
-            e.preventDefault();
+    // new employee
+    addButton.onclick = function (e) {
+        e.preventDefault();
 
         const name = prompt("Enter name:");
         if (name === null) return;
@@ -142,21 +153,27 @@ function showEmployees() {
         const email = prompt("Enter email:");
         if (email === null) return;
 
-         employees.push ({
-            id:       employees.length > 0 ? Math.max(...employees.map(u => u.id))+1:1,
-            name:     name,
+
+        if (!isValidEmail(email.trim())) {
+            alert("Invalid email address. Please enter a valid email (e.g. name@example.com).");
+            return;
+        }
+
+        employees.push({
+            id: employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,
+            name: name,
             username: username,
-            address:  address,
-            email : email
+            address: address,
+            email: email.trim()
         });
-        
+
         showEmployees();
     };
-        div.appendChild(buttonContainer);
-        div.appendChild(table);
-        //tbody.appendChild(row);
-    }
+    div.appendChild(buttonContainer);
+    div.appendChild(table);
+    //tbody.appendChild(row);
+}
 
-    
+
 showEmployees();
 
