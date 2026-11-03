@@ -1,65 +1,69 @@
+
 let employees = [
-    { id: 102048, name: "Tafhim", username: "taf18", address: "Banasree", email: "tafhim.sct@gmail.com" },
-    { id: 102049, name: "Fahim", username: "f4byte", address: "Basabo", email: "fahim.sct@gmail.com" },
-    { id: 102050, name: "Anindya", username: "haq.mawla", address: "Mdpur", email: "anindya.sct@gmail.com" },
-    { id: 102048, name: "him", username: "taf18", address: "Banasree", email: "tafhim.sct@gmail.com" },
-    { id: 102049, name: "Fah", username: "f4byte", address: "Basabo", email: "fahim.sct@gmail.com" },
-    { id: 102050, name: "ninda", username: "haq.mawla", address: "Mdpur", email: "anindya.sct@gmail.com" },
-    { id: 102048, name: "Taf", username: "taf18", address: "Banasree", email: "tafhim.sct@gmail.com" },
-    { id: 102049, name: "Fahm", username: "f4byte", address: "Basabo", email: "fahim.sct@gmail.com" },
-    { id: 102050, name: "Andya", username: "haq.mawla", address: "Mdpur", email: "anindya.sct@gmail.com" }
+    { id: 102048, name: "Tafhim", username: "taf18", address: "Banasree" },
+    { id: 102049, name: "Fahim", username: "f4byte", address: "Basabo" },
+    { id: 102050, name: "Anindya", username: "haq.mawla", address: "Mdpur" }
 ];
 
-// Email validation (regex)
-function isValidEmail(email) {
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-}
-
+let panelMode = "";
+let selectedEmp = null;
 
 function showEmployees() {
-    // my container
+     // my container
     const div = document.getElementById("container");
     div.innerHTML = "";
-    div.style.display = "inline-block";
+    div.style.display = "flex";
+    div.style.flexDirection = "row-reverse";
+    div.style.gap = "20px";
+    div.style.allignItems = "flex-start";
+    
+    const leftSide = document.createElement("div");
+    leftSide.style.flex = "1";
 
-    const table = document.createElement("table"); 
+    const table = document.createElement("table");
     table.style.width = "100%";
     table.style.borderCollapse = "collapse";
     table.style.fontFamily = "Roboto";
-    console.log('Fahim`s', table);
+    console.log('Fahim`s', table); 
 
-    // Add button
+
+     // Add button
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
     addButton.id = "addButton";
     addButton.type = "button";
-    addButton.style.backgroundColor = "grey";
+    addButton.style.backgroundColor = "red";
     addButton.style.color = "white";
-    addButton.style.padding = "3px 10px";
-    addButton.style.borderRadius = "5px";
+    addButton.style.padding = "5px 15px";
+    addButton.style.borderRadius = "10px";
+    addButton.onclick = function (e) {
+        e.preventDefault();
+        panelMode = "add";
+        selectedEmp = null;
+        showEmployees();
+
+    };
 
     const buttonContainer = document.createElement("div");
-    buttonContainer.style.textAlign = "right"; 
+    buttonContainer.style.textAlign = "right";
     buttonContainer.style.marginBottom = "10px";
     buttonContainer.appendChild(addButton);
 
 
-    // table header
+     // table header
     table.innerHTML = `
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Address</th>
-                <th>Email</th>
+                    <th>Name</th>
+                       <th>Username</th>
+                    <th>Address</th>
                 <th>Actions</th>
             </tr>
         </thead>
         `;
 
-    // border
+     // border
     table.querySelectorAll("th, td").forEach(function (cell) {
         cell.style.border = "1px solid ";
         cell.style.padding = "10px";
@@ -67,121 +71,194 @@ function showEmployees() {
         cell.style.textAlign = "left";
     });
 
-    // body
+     // body
     const tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
-
-    // rows 
-    employees.forEach(function (emp) {
-        const row = document.createElement("tr");
-
-        // 
-        //     
-        //     
-        // 
-        ["id", "name", "username", "address", "email"].forEach(function (key) {
-            const td = document.createElement("td");
-            td.textContent = emp[key];
-            row.appendChild(td);
-        });
-
-        const action = document.createElement("td");
-        const editButton = document.createElement("button");
-        editButton.textContent = "Edit";
-        editButton.style.marginRight = "5px";
-
-        editButton.onclick = function () {
-
-            const name = prompt("Enter name:", emp.name);
-            if (name === null) return;
-
-            const username = prompt("Enter username:", emp.username);
-            if (username === null) return;
-
-            const address = prompt("Enter Address:", emp.address);
-            if (address === null) return;
-
-            const email = prompt("Enter Email:", emp.email);
-            if (email === null) return;
+            // rows 
+                    employees.forEach(function (emp) {
+                        const row = document.createElement("tr");
+                        
+                        ["id","name","username","address"].forEach(function(key) {
+                            const td = document.createElement("td");
+                            td.textContent = emp[key];
+                            row.appendChild(td);
+                        });
             
-            if (!isValidEmail(email.trim())) {
-                alert("Invalid email address. Please enter a valid email (e.g. name@example.com).");
-                return;
-            }
+                    const action = document.createElement("td");
+
+             // edit btn
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.style.marginRight ="5px";
+                    editButton.style.padding = "5px 15px";
+                    editButton.style.borderRadius = "10px";
+
+                    editButton.onclick = function() {
+                        panelMode = "edit";
+                        selectedEmp = emp;
+                        showEmployees();
+                    };
+
+             // deletion
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.style.marginRight ="5px";
+                    deleteButton.style.padding = "5px 15px";
+                    deleteButton.style.borderRadius = "10px";
+
+                    deleteButton.onclick = function () {
+                        panelMode = "delete";
+                        selectedEmp = emp;
+                        showEmployees();
+                    };
+                    
+                    action.appendChild(editButton);
+                    action.appendChild(deleteButton);
+                    row.appendChild(action);
+                    tbody.appendChild(row);
+                });
+                
+                
+             // cell styling
+                    table.querySelectorAll("th, td").forEach(function (cell) {
+                        cell.style.border = "1px solid black";
+                        cell.style.padding = "10px";
+                        cell.style.textAlign = "left";
+                    });       
+                    table.querySelectorAll("th").forEach(function (th) {
+                        th.style.backgroundColor = "#0000003f";
+                    });
 
 
-            emp.name = name;
-            emp.username = username;
-            emp.address = address;
-            emp.email = email.trim();
 
-            showEmployees();
-        };
+                    leftSide.appendChild(buttonContainer);
+                    leftSide.appendChild(table);
+                    div.appendChild(leftSide);
+                    
+                    if (panelMode !== "") {
+                        const dialog = createPanel();
+                        div.appendChild(dialog);
+                        dialog.style.border = "1px solid black";
+                        dialog.style.backgroundColor = "#f0f0f0";
+                        dialog.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+                        dialog.showModal();
+                        
+                    }
+                        div.appendChild(createPanel ());
+                    }
+                
+                
+                function makeButton(text, color) {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.textContent = text;
+                    btn.style.backgroundColor = color;
+                    btn.style.color = "white";
+                    btn.style.marginRight = "5px";
+                    return btn;
+                }
 
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
+                function makeInput(panel, labelText, value) {
+                    const label = document.createElement("div");
+                    label.textContent = labelText;
+                    label.style.marginTop = "10px";
 
-        deleteButton.onclick = function () {
-            if (confirm("Are you sure you want to delete this user?")) {
-                employees = employees.filter(u => u.id !== emp.id);
-                showEmployees();
-            }
-        };
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.value = value;
+                    input.style.width = "100%";
+                    input.style.boxSizing = "border-box";
 
-        action.appendChild(editButton);
-        action.appendChild(deleteButton);
-        row.appendChild(action);
-        tbody.appendChild(row);
-    });
+                    panel.appendChild(label);
+                    panel.appendChild(input);
+                    return input;
+                }
 
-    // cell
-    table.querySelectorAll("th, td").forEach(function (cell) {
-        cell.style.border = "1px solid black";
-        cell.style.padding = "10px";
-        cell.style.textAlign = "left";
-    });
-    table.querySelectorAll("th").forEach(function (th) {
-        th.style.backgroundColor = "#0000003f";
-    });
+                function closePanel() {
+                    const dialog = document.querySelector("dialog");
+                    panelMode = "";
+                    selectedEmp = null;
+                    if (dialog) dialog.close();
+                    showEmployees ();
+                }
 
-    // new employee
-    addButton.onclick = function (e) {
-        e.preventDefault();
+                function createPanel() {
+                    const panel = document.createElement("dialog");
+                    panel.style.width = "300px";
+                    panel.style.fontFamily = "Roboto";
+                    panel.style.padding = "20px";
+                    panel.style.borderRadius = "10px";
+                    panel.onclose = function () {
+                        if (panelMode !== "") closePanel();
+                    };
 
-        const name = prompt("Enter name:");
-        if (name === null) return;
+                    const title = document.createElement("h3");
+                    title.style.marginTop = "0";
+                    panel.appendChild(title);
 
-        const username = prompt("Enter username:");
-        if (username === null) return;
+                    const buttonRow = document.createElement("div");
+                    buttonRow.style.marginTop = "10px";
 
-        const address = prompt("Enter address:");
-        if (address === null) return;
+                    const closeButton = makeButton("close", "grey");
+                    closeButton.onclick = closePanel;
 
-        const email = prompt("Enter email:");
-        if (email === null) return;
+                    if (panelMode === "delete") {
+                        title.textContent = "Delete Employee";
 
+                        const message = document.createElement("p");
+                        message.textContent = "Are you sure you wanna delete " + selectedEmp.name + "?";
+                        panel.appendChild(message);
 
-        if (!isValidEmail(email.trim())) {
-            alert("Invalid email address. Please enter a valid email (e.g. name@example.com).");
-            return;
-        }
+                        const confirmButton = makeButton("Delete","red");
+                        confirmButton.onclick =function() {
+                            employees = employees.filter(u => u.id !== selectedEmp.id);
+                            closePanel();
+                        };
 
-        employees.push({
-            id: employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,
-            name: name,
-            username: username,
-            address: address,
-            email: email.trim()
-        });
+                        buttonRow.appendChild(confirmButton);
+                        buttonRow.appendChild(closeButton);
+                        panel.appendChild(buttonRow);
+                        return panel;
+                    }
 
-        showEmployees();
-    };
-    div.appendChild(buttonContainer);
-    div.appendChild(table);
-    //tbody.appendChild(row);
-}
+                 // add / edit 
+                 let oldName = "", oldUsername = "", oldAddress = "";
+                 
+                 if (panelMode === "edit") {
+                    title.textContent = "Edit Employee";
+                    oldName = selectedEmp.name;
+                    oldUsername = selectedEmp.username;
+                    oldAddress = selectedEmp.address;
+                 } else {
+                    title.textContent = "Add Employee";
+                    }
 
+                    const nameInput = makeInput(panel, "Name", oldName);
+                    const usernameInput = makeInput(panel, "Username", oldUsername);
+                    const addressInput = makeInput(panel,"Address", oldAddress);
 
+                    const saveButton = makeButton("Save","green");
+                    saveButton.onclick = function () {
+                        if (panelMode === "edit") {
+                            selectedEmp.name = nameInput.value;
+                            selectedEmp.username = usernameInput.value;
+                            selectedEmp.address = addressInput.value;
+                        } else {
+                            employees.push({
+                                id : employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,
+                                name : nameInput.value,
+                                username : usernameInput.value,
+                                address : addressInput.value
+                            });
+                        }
+                        closePanel();
+                    };
+                    buttonRow.appendChild(saveButton);
+                    buttonRow.appendChild(closeButton);
+                    panel.appendChild(buttonRow);
+                    return panel;
+                }
+    
 showEmployees();
 
