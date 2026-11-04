@@ -142,6 +142,7 @@ function showEmployees() {
                         dialog.style.border = "1px solid black";
                         dialog.style.backgroundColor = "#f0f0f0";
                         dialog.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+                        
                         dialog.showModal();
                         
                     }
