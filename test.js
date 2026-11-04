@@ -1,265 +1,347 @@
 
 let employees = [
-    { id: 102048, name: "Tafhim", username: "taf18", address: "Banasree" },
-    { id: 102049, name: "Fahim", username: "f4byte", address: "Basabo" },
-    { id: 102050, name: "Anindya", username: "haq.mawla", address: "Mdpur" }
+    { id: 102048, name: "Tafhim", username: "taf18", address: "Banasree", email: "tafhim.sct@gmail.com" },
+    { id: 102049, name: "Fahim", username: "f4byte", address: "Basabo", email: "fahim.sct@gmail.com" },
+    { id: 102050, name: "Anindya", username: "haq.mawla", address: "Mdpur", email: "anindya.sct@gmail.com" }
 ];
 
-let panelMode = "";
-let selectedEmp = null;
+    // regex
+    function isValidId(id) {
+        const idRegex = /^[0-9]+$/;
+        return idRegex.test(id);
+    }
+        function isValidName(name) {
+            const nameRegex = /^[A-Za-z\s]+$/;
+            return nameRegex.test(name);
+    }
+        function isValidUsername(username) {
+            const usernameRegex = /^[A-Za-z0-9._]+$/;
+            return usernameRegex.test(username);
+    }
+        function isValidAddress(address) {
+            const addressRegex = /^[A-Za-z0-9\s,.-]+$/;
+            return addressRegex.test(address);
+    }
+        function isValidEmail(email) {
+            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+            return emailRegex.test(email);
+    }
+
+        let panelMode = "";
+        let selectedEmp = null;
 
 function showEmployees() {
-     // my container
-    const div = document.getElementById("container");
-    div.innerHTML = "";
-    div.style.display = "flex";
-    div.style.flexDirection = "row-reverse";
-    div.style.gap = "20px";
-    div.style.allignItems = "flex-start";
-    
-    const leftSide = document.createElement("div");
-    leftSide.style.flex = "1";
 
-    const table = document.createElement("table");
-    table.style.width = "100%";
-    table.style.borderCollapse = "collapse";
-    table.style.fontFamily = "Roboto";
-    console.log('Fahim`s', table); 
+    // my container
+        const div = document.getElementById("container");
+        div.innerHTML = "";
+        div.style.display = "flex";
+        div.style.flexDirection = "row-reverse";
+        div.style.gap = "20px";
+        div.style.allignItems = "flex-start";
 
+        const leftSide = document.createElement("div");
+        leftSide.style.flex = "1";
 
-     // Add button
-    const addButton = document.createElement("button");
-    addButton.textContent = "Add";
-    addButton.id = "addButton";
-    addButton.type = "button";
-    addButton.style.backgroundColor = "red";
-    addButton.style.color = "white";
-    addButton.style.padding = "5px 15px";
-    addButton.style.borderRadius = "10px";
-    addButton.onclick = function (e) {
-        e.preventDefault();
-        panelMode = "add";
-        selectedEmp = null;
-        showEmployees();
-
-    };
-
-    const buttonContainer = document.createElement("div");
-    buttonContainer.style.textAlign = "right";
-    buttonContainer.style.marginBottom = "10px";
-    buttonContainer.appendChild(addButton);
+        const table = document.createElement("table");
+        table.style.width = "100%";
+        table.style.borderCollapse = "collapse";
+        table.style.fontFamily = "Roboto";
+        console.log('Fahim`s', table);
 
 
-     // table header
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th>
-                    <th>Name</th>
-                       <th>Username</th>
-                    <th>Address</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        `;
+    // Add button
+        const addButton = document.createElement("button");
+        addButton.textContent = "Add";
+        addButton.id = "addButton";
+        addButton.type = "button";
+        addButton.style.backgroundColor = "red";
+        addButton.style.color = "white";
+        addButton.style.padding = "5px 15px";
+        addButton.style.borderRadius = "10px";
+        addButton.onclick = function (e) {
+            e.preventDefault();
+            panelMode = "add";
+            selectedEmp = null;
+            showEmployees();
 
-     // border
-    table.querySelectorAll("th, td").forEach(function (cell) {
-        cell.style.border = "1px solid ";
-        cell.style.padding = "10px";
-        cell.style.backgroundColor = "#6b4fb9";
-        cell.style.textAlign = "left";
-    });
+        };
 
-     // body
-    const tbody = document.createElement("tbody");
-    table.appendChild(tbody);
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.textAlign = "right";
+        buttonContainer.style.marginBottom = "10px";
+        buttonContainer.appendChild(addButton);
 
-            // rows 
-                    employees.forEach(function (emp) {
-                        const row = document.createElement("tr");
-                        
-                        ["id","name","username","address"].forEach(function(key) {
-                            const td = document.createElement("td");
-                            td.textContent = emp[key];
-                            row.appendChild(td);
-                        });
+
+    // table header
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                          <th>Address</th>
+                        <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            `;
+
+    // border
+        table.querySelectorAll("th, td").forEach(function (cell) {
+            cell.style.border = "1px solid ";
+            cell.style.padding = "10px";
+            cell.style.backgroundColor = "#6b4fb9";
+            cell.style.textAlign = "left";
+        });
+
+    // body
+        const tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+    // rows 
+        employees.forEach(function (emp) {
+            const row = document.createElement("tr");
+
+            ["id", "name", "username", "address", "email"].forEach(function (key) {
+                const td = document.createElement("td");
+                td.textContent = emp[key];
+                row.appendChild(td);
+            });
+
+            const action = document.createElement("td");
+
+        // edit btn
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+
+            editButton.style.marginRight = "5px";
+            editButton.style.padding = "5px 15px";
+            editButton.style.borderRadius = "10px";
+
+            editButton.onclick = function () {
+                panelMode = "edit";
+                selectedEmp = emp;
+                showEmployees();
+                
+            };
+
+        // deletion
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.style.marginRight = "5px";
+            deleteButton.style.padding = "5px 15px";
+            deleteButton.style.borderRadius = "10px";
+
+            deleteButton.onclick = function () {
+                panelMode = "delete";
+                selectedEmp = emp;
+                showEmployees();
+            };
+
+            action.appendChild(editButton);
+            action.appendChild(deleteButton);
+            row.appendChild(action);
+            tbody.appendChild(row);
+        });
+
+
+    // cell styling
+
+        table.querySelectorAll("th, td").forEach(function (cell) {
+            cell.style.border = "1px solid black";
+            cell.style.padding = "10px";
+            cell.style.textAlign = "left";
+        });
+        table.querySelectorAll("th").forEach(function (th) {
+            th.style.backgroundColor = "#0000003f";
+        });
+
+
+
+        leftSide.appendChild(buttonContainer);
+        leftSide.appendChild(table);
+        div.appendChild(leftSide);
+
+            if (panelMode !== "") {
+                const dialog = createPanel();
+                div.appendChild(dialog);
+                dialog.style.border = "1px solid black";
+                dialog.style.backgroundColor = "#f0f0f0";
+                dialog.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+
+                dialog.showModal();
+
+            }
+            div.appendChild(createPanel());
+        }
+
+
+        function makeButton(text, color) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = text;
+            btn.style.backgroundColor = color;
+            btn.style.color = "white";
+            btn.style.marginRight = "5px";
+            return btn;
+        }
+
+        function makeInput(panel, labelText, value) {
+            const label = document.createElement("div");
+            label.textContent = labelText;
+            label.style.marginTop = "10px";
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = value;
+            input.style.width = "100%";
+            input.style.boxSizing = "border-box";
+
+            panel.appendChild(label);
+            panel.appendChild(input);
+            return input;
+        }
+
+        function closePanel() {
+            const dialog = document.querySelector("dialog");
+            panelMode = "";
+            selectedEmp = null;
+            if (dialog) dialog.close();
+            showEmployees();
+        }
+
+        function createPanel() {
+            const panel = document.createElement("dialog");
+            panel.style.width = "300px";
+            panel.style.fontFamily = "Roboto";
+            panel.style.padding = "20px";
+            panel.style.borderRadius = "10px";
+            panel.onclose = function () {
+                if (panelMode !== "") closePanel();
+            };
+
+        const title = document.createElement("h3");
+        title.style.marginTop = "0";
+        panel.appendChild(title);
+
+        const buttonRow = document.createElement("div");
+        buttonRow.style.marginTop = "10px";
+
+        const closeButton = makeButton("close", "grey");
+        closeButton.onclick = closePanel;
+
+        if (panelMode === "delete") {
+            title.textContent = "Delete Employee";
+
+            const message = document.createElement("p");
+            message.textContent = "Are you sure you want to delete but why " + selectedEmp.name + "?";
+            panel.appendChild(message);
+
+            const confirmButton = makeButton("Delete", "red");
+            confirmButton.onclick = function () {
+                employees = employees.filter(u => u !== selectedEmp);
+                closePanel();
+            };
+
+            buttonRow.appendChild(confirmButton);
+            buttonRow.appendChild(closeButton);
+            panel.appendChild(buttonRow);
+            return panel;
+        }
+
+    // add / edit 
+
+        let oldId = "", oldName = "", oldUsername = "", oldAddress = "", oldEmail = "";
+
+        if (panelMode === "edit") {
+            title.textContent = "Edit Employee";
+            oldId = selectedEmp.id;
+            oldName = selectedEmp.name;
+            oldUsername = selectedEmp.username;
+            oldAddress = selectedEmp.address;
+            oldEmail = selectedEmp.email;
+        } else {
+            title.textContent = "Add Employee";
+        }
+
+        const idInput = makeInput(panel, "ID", oldId);
+        const nameInput = makeInput(panel, "Name", oldName);
+        const usernameInput = makeInput(panel, "Username", oldUsername);
+        const addressInput = makeInput(panel, "Address", oldAddress);
+        const emailInput = makeInput(panel, "Email", oldEmail);
+        const saveButton = makeButton("Save", "green");
+        const errorMessage = document.createElement("p");
+        errorMessage.style.color = "red";
+        errorMessage.style.marginTop = "10px";
+        errorMessage.style.margin = "5px 0 0";
+        errorMessage.style.fontSize = "14px";
+        errorMessage.style.display = "none";
+
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            errorMessage.style.display = "block";
+        }
+
+        panel.appendChild(errorMessage);
+        saveButton.onclick = function () {
+
+            const id = idInput.value.trim();
+            if (!isValidId(id)) {
+                showError("Please enter a valid ID.");
+                return;
+            }
+            const name = nameInput.value.trim();
+            if (!isValidName(name)) {
+                showError("Please enter a valid name (letters and spaces only).");
+                return;
+            }
+            const username = usernameInput.value.trim();
+            if (!isValidUsername(username)) {
+                showError("Please enter a valid username (letters, numbers, dots, and underscores only).");
+                return;
+            }
+            const address = addressInput.value.trim();
+            if (!isValidAddress(address)) {
+                showError("Please enter a valid address (letters, numbers, spaces, commas, dots, and hyphens only).");
+                return;
+            }
             
-                    const action = document.createElement("td");
+            const duplicate = employees.some(u => String(u.id) === id && u !== selectedEmp);
+            if (duplicate) {
+                showError("ID already assigned to another employee.");
+                return;
+            }
 
-             // edit btn
-                    const editButton = document.createElement("button");
-                    editButton.textContent = "Edit";
-                    editButton.style.marginRight ="5px";
-                    editButton.style.padding = "5px 15px";
-                    editButton.style.borderRadius = "10px";
-
-                    editButton.onclick = function() {
-                        panelMode = "edit";
-                        selectedEmp = emp;
-                        showEmployees();
-                    };
-
-             // deletion
-                    const deleteButton = document.createElement("button");
-                    deleteButton.textContent = "Delete";
-                    deleteButton.style.marginRight ="5px";
-                    deleteButton.style.padding = "5px 15px";
-                    deleteButton.style.borderRadius = "10px";
-
-                    deleteButton.onclick = function () {
-                        panelMode = "delete";
-                        selectedEmp = emp;
-                        showEmployees();
-                    };
-                    
-                    action.appendChild(editButton);
-                    action.appendChild(deleteButton);
-                    row.appendChild(action);
-                    tbody.appendChild(row);
+            const email = emailInput.value.trim();
+            if (!isValidEmail(email)) {
+                showError("Please enter a valid email address.");
+                return; 
+            }
+            if (panelMode === "edit") {
+                selectedEmp.id = Number(id);
+                selectedEmp.name = nameInput.value;
+                selectedEmp.username = usernameInput.value;
+                selectedEmp.address = addressInput.value;
+                selectedEmp.email = email;
+            } else {
+                employees.push({
+                    //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
+                    id: Number(id), // Add the new employee to the employees array
+                    name: nameInput.value,
+                    username: usernameInput.value,
+                    address: addressInput.value,
+                    email: email
                 });
-                
-                
-             // cell styling
-                    table.querySelectorAll("th, td").forEach(function (cell) {
-                        cell.style.border = "1px solid black";
-                        cell.style.padding = "10px";
-                        cell.style.textAlign = "left";
-                    });       
-                    table.querySelectorAll("th").forEach(function (th) {
-                        th.style.backgroundColor = "#0000003f";
-                    });
+            }
+            closePanel();
+        };
+            buttonRow.appendChild(saveButton);
+            buttonRow.appendChild(closeButton);
+            panel.appendChild(buttonRow);
+            return panel;
+        }
 
-
-
-                    leftSide.appendChild(buttonContainer);
-                    leftSide.appendChild(table);
-                    div.appendChild(leftSide);
-                    
-                    if (panelMode !== "") {
-                        const dialog = createPanel();
-                        div.appendChild(dialog);
-                        dialog.style.border = "1px solid black";
-                        dialog.style.backgroundColor = "#f0f0f0";
-                        dialog.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-                        
-                        dialog.showModal();
-                        
-                    }
-                        div.appendChild(createPanel ());
-                    }
-                
-                
-                function makeButton(text, color) {
-                    const btn = document.createElement("button");
-                    btn.type = "button";
-                    btn.textContent = text;
-                    btn.style.backgroundColor = color;
-                    btn.style.color = "white";
-                    btn.style.marginRight = "5px";
-                    return btn;
-                }
-
-                function makeInput(panel, labelText, value) {
-                    const label = document.createElement("div");
-                    label.textContent = labelText;
-                    label.style.marginTop = "10px";
-
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.value = value;
-                    input.style.width = "100%";
-                    input.style.boxSizing = "border-box";
-
-                    panel.appendChild(label);
-                    panel.appendChild(input);
-                    return input;
-                }
-
-                function closePanel() {
-                    const dialog = document.querySelector("dialog");
-                    panelMode = "";
-                    selectedEmp = null;
-                    if (dialog) dialog.close();
-                    showEmployees ();
-                }
-
-                function createPanel() {
-                    const panel = document.createElement("dialog");
-                    panel.style.width = "300px";
-                    panel.style.fontFamily = "Roboto";
-                    panel.style.padding = "20px";
-                    panel.style.borderRadius = "10px";
-                    panel.onclose = function () {
-                        if (panelMode !== "") closePanel();
-                    };
-
-                    const title = document.createElement("h3");
-                    title.style.marginTop = "0";
-                    panel.appendChild(title);
-
-                    const buttonRow = document.createElement("div");
-                    buttonRow.style.marginTop = "10px";
-
-                    const closeButton = makeButton("close", "grey");
-                    closeButton.onclick = closePanel;
-
-                    if (panelMode === "delete") {
-                        title.textContent = "Delete Employee";
-
-                        const message = document.createElement("p");
-                        message.textContent = "Are you sure you wanna delete " + selectedEmp.name + "?";
-                        panel.appendChild(message);
-
-                        const confirmButton = makeButton("Delete","red");
-                        confirmButton.onclick =function() {
-                            employees = employees.filter(u => u.id !== selectedEmp.id);
-                            closePanel();
-                        };
-
-                        buttonRow.appendChild(confirmButton);
-                        buttonRow.appendChild(closeButton);
-                        panel.appendChild(buttonRow);
-                        return panel;
-                    }
-
-                 // add / edit 
-                 let oldName = "", oldUsername = "", oldAddress = "";
-                 
-                 if (panelMode === "edit") {
-                    title.textContent = "Edit Employee";
-                    oldName = selectedEmp.name;
-                    oldUsername = selectedEmp.username;
-                    oldAddress = selectedEmp.address;
-                 } else {
-                    title.textContent = "Add Employee";
-                    }
-
-                    const nameInput = makeInput(panel, "Name", oldName);
-                    const usernameInput = makeInput(panel, "Username", oldUsername);
-                    const addressInput = makeInput(panel,"Address", oldAddress);
-
-                    const saveButton = makeButton("Save","green");
-                    saveButton.onclick = function () {
-                        if (panelMode === "edit") {
-                            selectedEmp.name = nameInput.value;
-                            selectedEmp.username = usernameInput.value;
-                            selectedEmp.address = addressInput.value;
-                        } else {
-                            employees.push({
-                                id : employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,
-                                name : nameInput.value,
-                                username : usernameInput.value,
-                                address : addressInput.value
-                            });
-                        }
-                        closePanel();
-                    };
-                    buttonRow.appendChild(saveButton);
-                    buttonRow.appendChild(closeButton);
-                    panel.appendChild(buttonRow);
-                    return panel;
-                }
-    
 showEmployees();
 
