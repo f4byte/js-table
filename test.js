@@ -1,9 +1,6 @@
-
-let employees = [
-    { id: 102048, name: "Tafhim", username: "taf18", address: "Banasree", email: "tafhim.sct@gmail.com" },
-    { id: 102049, name: "Fahim", username: "f4byte", address: "Basabo", email: "fahim.sct@gmail.com" },
-    { id: 102050, name: "Anindya", username: "haq.mawla", address: "Mdpur", email: "anindya.sct@gmail.com" }
-];
+let employees = [];
+let loadingMessage = "Loading users...";
+let loadError = "";
 
     // regex
     function isValidId(id) {
@@ -43,6 +40,13 @@ function showEmployees() {
         const leftSide = document.createElement("div");
         leftSide.style.flex = "1";
 
+        if (loadingMessage || loadError) {
+            const status = document.createElement("p");
+            status.textContent = loadingMessage || loadError;
+            status.style.color = loadError ? "red" : "inherit";
+            leftSide.appendChild(status);
+        }
+
         const table = document.createElement("table");
         table.style.width = "100%";
         table.style.borderCollapse = "collapse";
@@ -64,7 +68,6 @@ function showEmployees() {
             panelMode = "add";
             selectedEmp = null;
             showEmployees();
-
         };
 
         const buttonContainer = document.createElement("div");
@@ -123,7 +126,6 @@ function showEmployees() {
                 panelMode = "edit";
                 selectedEmp = emp;
                 showEmployees();
-                
             };
 
         // deletion
@@ -343,5 +345,34 @@ function showEmployees() {
             return panel;
         }
 
-showEmployees();
+async function loadEmployees() {
+    showEmployees();
 
+    try {
+        const response = await fetch("https://jsonplaceholder.typicode.com/users");
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const users = await response.json();
+        employees = users.map(function (user) {
+            return {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                address: `${user.address.street}, ${user.address.city}`,
+                email: user.email
+            };
+        });
+        loadingMessage = "";
+        loadError = "";
+    } catch (error) {
+        loadingMessage = "";
+        loadError = "Unable to load users. Please check your connection and try again.";
+        console.error("Failed to load users:", error);
+    }
+
+    showEmployees();
+}
+
+loadEmployees();
