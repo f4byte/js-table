@@ -1,228 +1,71 @@
-let employees = [];
-let loadingMessage = "Loading users...";
-let loadError = "";
+function sctEmployees() {
+    let employees = [];
+    let loadingMessage = "Loading users...";
+    let loadError = "";
+    let panelMode = "";
+    let selectedEmp = null;
 
     // regex
     function isValidId(id) {
-        const idRegex = /^[0-9]+$/;
-        return idRegex.test(id);
+        return /^[0-9]+$/.test(id);
     }
-        function isValidName(name) {
-            const nameRegex = /^[A-Za-z\s]+$/;
-            return nameRegex.test(name);
+    function isValidName(name) {
+        return /^[A-Za-z\s]+$/.test(name);
     }
-        function isValidUsername(username) {
-            const usernameRegex = /^[A-Za-z0-9._]+$/;
-            return usernameRegex.test(username);
+    function isValidUsername(username) {
+        return /^[A-Za-z0-9._]+$/.test(username);
     }
-        function isValidAddress(address) {
-            const addressRegex = /^[A-Za-z0-9\s,.-]+$/;
-            return addressRegex.test(address);
+    function isValidAddress(address) {
+        return /^[A-Za-z0-9\s,.-]+$/.test(address);
     }
-        function isValidEmail(email) {
-            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
-            return emailRegex.test(email);
+    function isValidEmail(email) {
+        return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(email);
+    }
+    
+    // create button
+    function makeButton(text, color) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = text;
+        btn.style.backgroundColor = color;
+        btn.style.color = "white";
+        btn.style.marginRight = "5px";
+        return btn;
     }
 
-        let panelMode = "";
-        let selectedEmp = null;
+    function makeInput(panel, labelText, value) {
+        const label = document.createElement("div");
+        label.textContent = labelText;
+        label.style.marginTop = "10px";
 
-function showEmployees() {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = value;
+        input.style.width = "100%";
+        input.style.boxSizing = "border-box";
 
-    // my container
-        const div = document.getElementById("container");
-        div.innerHTML = "";
-        div.style.display = "flex";
-        div.style.flexDirection = "row-reverse";
-        div.style.gap = "20px";
-        div.style.allignItems = "flex-start";
+        panel.appendChild(label);
+        panel.appendChild(input);
+        return input;
+    }
 
-        const leftSide = document.createElement("div");
-        leftSide.style.flex = "1";
+    function closePanel() {
+        const dialog = document.querySelector("dialog");
+        panelMode = "";
+        selectedEmp = null;
+        if (dialog) dialog.close();
+        showEmployees();
+    }
 
-        if (loadingMessage || loadError) {
-            const status = document.createElement("p");
-            status.textContent = loadingMessage || loadError;
-            status.style.color = loadError ? "red" : "inherit";
-            leftSide.appendChild(status);
-        }
-
-        const table = document.createElement("table");
-        table.style.width = "100%";
-        table.style.borderCollapse = "collapse";
-        table.style.fontFamily = "Roboto";
-        console.log('Fahim`s', table);
-
-
-    // Add button
-        const addButton = document.createElement("button");
-        addButton.textContent = "Add";
-        addButton.id = "addButton";
-        addButton.type = "button";
-        addButton.style.backgroundColor = "red";
-        addButton.style.color = "white";
-        addButton.style.padding = "5px 15px";
-        addButton.style.borderRadius = "10px";
-        addButton.onclick = function (e) {
-            e.preventDefault();
-            panelMode = "add";
-            selectedEmp = null;
-            showEmployees();
+    function createPanel() {
+        const panel = document.createElement("dialog");
+        panel.style.width = "300px";
+        panel.style.fontFamily = "Roboto";
+        panel.style.padding = "20px";
+        panel.style.borderRadius = "10px";
+        panel.onclose = function () {
+            if (panelMode !== "") closePanel();
         };
-
-        const buttonContainer = document.createElement("div");
-        buttonContainer.style.textAlign = "right";
-        buttonContainer.style.marginBottom = "10px";
-        buttonContainer.appendChild(addButton);
-
-
-    // table header
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>ID</th>
-                        <th>Name</th>
-                        <th>Username</th>
-                          <th>Address</th>
-                        <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            `;
-
-    // border
-        table.querySelectorAll("th, td").forEach(function (cell) {
-            cell.style.border = "1px solid ";
-            cell.style.padding = "10px";
-            cell.style.backgroundColor = "#6b4fb9";
-            cell.style.textAlign = "left";
-        });
-
-    // body
-        const tbody = document.createElement("tbody");
-        table.appendChild(tbody);
-
-    // rows 
-        employees.forEach(function (emp) {
-            const row = document.createElement("tr");
-
-            ["id", "name", "username", "address", "email"].forEach(function (key) {
-                const td = document.createElement("td");
-                td.textContent = emp[key];
-                row.appendChild(td);
-            });
-
-            const action = document.createElement("td");
-
-        // edit btn
-            const editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-
-            editButton.style.marginRight = "5px";
-            editButton.style.padding = "5px 15px";
-            editButton.style.borderRadius = "10px";
-
-            editButton.onclick = function () {
-                panelMode = "edit";
-                selectedEmp = emp;
-                showEmployees();
-            };
-
-        // deletion
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.style.marginRight = "5px";
-            deleteButton.style.padding = "5px 15px";
-            deleteButton.style.borderRadius = "10px";
-
-            deleteButton.onclick = function () {
-                panelMode = "delete";
-                selectedEmp = emp;
-                showEmployees();
-            };
-
-            action.appendChild(editButton);
-            action.appendChild(deleteButton);
-            row.appendChild(action);
-            tbody.appendChild(row);
-        });
-
-
-    // cell styling
-
-        table.querySelectorAll("th, td").forEach(function (cell) {
-            cell.style.border = "1px solid black";
-            cell.style.padding = "10px";
-            cell.style.textAlign = "left";
-        });
-        table.querySelectorAll("th").forEach(function (th) {
-            th.style.backgroundColor = "#0000003f";
-        });
-
-
-
-        leftSide.appendChild(buttonContainer);
-        leftSide.appendChild(table);
-        div.appendChild(leftSide);
-
-            if (panelMode !== "") {
-                const dialog = createPanel();
-                div.appendChild(dialog);
-                dialog.style.border = "1px solid black";
-                dialog.style.backgroundColor = "#f0f0f0";
-                dialog.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-
-                dialog.showModal();
-
-            }
-            div.appendChild(createPanel());
-        }
-
-
-        function makeButton(text, color) {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.textContent = text;
-            btn.style.backgroundColor = color;
-            btn.style.color = "white";
-            btn.style.marginRight = "5px";
-            return btn;
-        }
-
-        function makeInput(panel, labelText, value) {
-            const label = document.createElement("div");
-            label.textContent = labelText;
-            label.style.marginTop = "10px";
-
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = value;
-            input.style.width = "100%";
-            input.style.boxSizing = "border-box";
-
-            panel.appendChild(label);
-            panel.appendChild(input);
-            return input;
-        }
-
-        function closePanel() {
-            const dialog = document.querySelector("dialog");
-            panelMode = "";
-            selectedEmp = null;
-            if (dialog) dialog.close();
-            showEmployees();
-        }
-
-        function createPanel() {
-            const panel = document.createElement("dialog");
-            panel.style.width = "300px";
-            panel.style.fontFamily = "Roboto";
-            panel.style.padding = "20px";
-            panel.style.borderRadius = "10px";
-            panel.onclose = function () {
-                if (panelMode !== "") closePanel();
-            };
 
         const title = document.createElement("h3");
         title.style.marginTop = "0";
@@ -234,6 +77,7 @@ function showEmployees() {
         const closeButton = makeButton("close", "grey");
         closeButton.onclick = closePanel;
 
+        // delete panel
         if (panelMode === "delete") {
             title.textContent = "Delete Employee";
 
@@ -253,7 +97,7 @@ function showEmployees() {
             return panel;
         }
 
-    // add / edit 
+        // add / edit panel
 
         let oldId = "", oldName = "", oldUsername = "", oldAddress = "", oldEmail = "";
 
@@ -309,7 +153,7 @@ function showEmployees() {
                 showError("Please enter a valid address (letters, numbers, spaces, commas, dots, and hyphens only).");
                 return;
             }
-            
+
             const duplicate = employees.some(u => String(u.id) === id && u !== selectedEmp);
             if (duplicate) {
                 showError("ID already assigned to another employee.");
@@ -319,7 +163,7 @@ function showEmployees() {
             const email = emailInput.value.trim();
             if (!isValidEmail(email)) {
                 showError("Please enter a valid email address.");
-                return; 
+                return;
             }
             if (panelMode === "edit") {
                 selectedEmp.id = Number(id);
@@ -339,40 +183,192 @@ function showEmployees() {
             }
             closePanel();
         };
-            buttonRow.appendChild(saveButton);
-            buttonRow.appendChild(closeButton);
-            panel.appendChild(buttonRow);
-            return panel;
+        buttonRow.appendChild(saveButton);
+        buttonRow.appendChild(closeButton);
+        panel.appendChild(buttonRow);
+        return panel;
+    }
+    
+    function showEmployees() {
+        
+        // my container
+        const div = document.getElementById("container");
+        div.innerHTML = "";
+        div.style.display = "flex";
+        div.style.flexDirection = "row-reverse";
+        div.style.gap = "20px";
+        div.style.allignItems = "flex-start";
+
+        const leftSide = document.createElement("div");
+        leftSide.style.flex = "1";
+
+        if (loadingMessage || loadError) {
+            const status = document.createElement("p");
+            status.textContent = loadingMessage || loadError;
+            status.style.color = loadError ? "red" : "inherit";
+            leftSide.appendChild(status);
         }
 
-async function loadEmployees() {
-    showEmployees();
+        const table = document.createElement("table");
+        table.style.width = "100%";
+        table.style.borderCollapse = "collapse";
+        table.style.fontFamily = "Roboto";
+        console.log('Fahim`s', table);
 
-    try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
 
-        const users = await response.json();
-        employees = users.map(function (user) {
-            return {
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                address: `${user.address.street}, ${user.address.city}`,
-                email: user.email
-            };
+        // Add button
+        const addButton = document.createElement("button");
+        addButton.textContent = "Add";
+        addButton.id = "addButton";
+        addButton.type = "button";
+        addButton.style.backgroundColor = "red";
+        addButton.style.color = "white";
+        addButton.style.padding = "5px 15px";
+        addButton.style.borderRadius = "10px";
+        addButton.onclick = function (e) {
+            e.preventDefault();
+            panelMode = "add";
+            selectedEmp = null;
+            showEmployees();
+        };
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.textAlign = "right";
+        buttonContainer.style.marginBottom = "10px";
+        buttonContainer.appendChild(addButton);
+
+
+        // table header
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                          <th>Address</th>
+                        <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            `;
+
+        // cell style
+        table.querySelectorAll("th, td").forEach(function (cell) {
+            cell.style.border = "1px solid ";
+            cell.style.padding = "10px";
+            cell.style.backgroundColor = "#6b4fb9";
+            cell.style.textAlign = "left";
         });
-        loadingMessage = "";
-        loadError = "";
-    } catch (error) {
-        loadingMessage = "";
-        loadError = "Unable to load users. Please check your connection and try again.";
-        console.error("Failed to load users:", error);
+
+        // body
+        const tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+        // rows 
+        employees.forEach(function (emp) {
+            const row = document.createElement("tr");
+
+            ["id", "name", "username", "address", "email"].forEach(function (key) {
+                const td = document.createElement("td");
+                td.textContent = emp[key];
+                row.appendChild(td);
+            });
+
+            const action = document.createElement("td");
+
+            // edit btn
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+
+            editButton.style.marginRight = "5px";
+            editButton.style.padding = "5px 15px";
+            editButton.style.borderRadius = "10px";
+
+            editButton.onclick = function () {
+                panelMode = "edit";
+                selectedEmp = emp;
+                showEmployees();
+            };
+
+            // deletion
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.style.marginRight = "5px";
+            deleteButton.style.padding = "5px 15px";
+            deleteButton.style.borderRadius = "10px";
+
+            deleteButton.onclick = function () {
+                panelMode = "delete";
+                selectedEmp = emp;
+                showEmployees();
+            };
+
+            action.appendChild(editButton);
+            action.appendChild(deleteButton);
+            row.appendChild(action);
+            tbody.appendChild(row);
+        });
+
+
+        // cell styling
+
+        table.querySelectorAll("th, td").forEach(function (cell) {
+            cell.style.border = "1px solid black";
+            cell.style.padding = "10px";
+            cell.style.textAlign = "left";
+        });
+        table.querySelectorAll("th").forEach(function (th) {
+            th.style.backgroundColor = "#0000003f";
+        });
+
+        leftSide.appendChild(buttonContainer);
+        leftSide.appendChild(table);
+        div.appendChild(leftSide);
+
+        if (panelMode !== "") {
+            const dialog = createPanel();
+            div.appendChild(dialog);
+            dialog.style.border = "1px solid black";
+            dialog.style.backgroundColor = "#f0f0f0";
+            dialog.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+            dialog.showModal();
+        }
+        div.appendChild(createPanel());
     }
 
-    showEmployees();
+    // load emp from API 
+    async function loadEmployees() {
+        showEmployees();
+
+        try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/users");
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            const users = await response.json();
+            employees = users.map(function (user) {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    address: `${user.address.street}, ${user.address.city}`,
+                    email: user.email
+                };
+            });
+            loadingMessage = "";
+            loadError = "";
+        } catch (error) {
+            loadingMessage = "";
+            loadError = "Unable to load users. Please check your connection and try again.";
+            console.error("Failed to load users:", error);
+        }
+
+        showEmployees();
+    }
+
+    loadEmployees();
 }
 
-loadEmployees();
+sctEmployees();
