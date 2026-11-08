@@ -21,7 +21,13 @@ function sctEmployees() {
     function isValidEmail(email) {
         return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(email);
     }
-    
+    function isValidPhone(phone) {
+        return /^[0-9\s()+-]+$/.test(phone);
+    }
+    function isValidWebsite(website) {
+        return /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(website);
+    }
+
     // create button
     function makeButton(text, color) {
         const btn = document.createElement("button");
@@ -99,7 +105,7 @@ function sctEmployees() {
 
         // add / edit panel
 
-        let oldId = "", oldName = "", oldUsername = "", oldAddress = "", oldEmail = "";
+        let oldId = "", oldName = "", oldUsername = "", oldAddress = "", oldEmail = "", oldPhone = "", oldWebsite = "";
 
         if (panelMode === "edit") {
             title.textContent = "Edit Employee";
@@ -108,6 +114,8 @@ function sctEmployees() {
             oldUsername = selectedEmp.username;
             oldAddress = selectedEmp.address;
             oldEmail = selectedEmp.email;
+            oldPhone = selectedEmp.phone;
+            oldWebsite = selectedEmp.website;
         } else {
             title.textContent = "Add Employee";
         }
@@ -117,6 +125,8 @@ function sctEmployees() {
         const usernameInput = makeInput(panel, "Username", oldUsername);
         const addressInput = makeInput(panel, "Address", oldAddress);
         const emailInput = makeInput(panel, "Email", oldEmail);
+        const phoneInput = makeInput(panel, "Phone", oldPhone);
+        const websiteInput = makeInput(panel, "Website", oldWebsite);
         const saveButton = makeButton("Save", "green");
         const errorMessage = document.createElement("p");
         errorMessage.style.color = "red";
@@ -153,6 +163,21 @@ function sctEmployees() {
                 showError("Please enter a valid address (letters, numbers, spaces, commas, dots, and hyphens only).");
                 return;
             }
+            const email = emailInput.value.trim();
+            if (!isValidEmail(email)) {
+                showError("Please enter a valid email address.");
+                return;
+            }
+            const phone = phoneInput.value.trim();
+            if (!isValidPhone(phone)) {
+                showError("Please enter a valid phone number (numbers, spaces, parenthesis, plus, and hyphens only).");
+                return;
+            }
+            const website = websiteInput.value.trim();
+            if (!isValidWebsite(website)) {
+                showError("Please enter a valid website URL.");
+                 return;
+            }
 
             const duplicate = employees.some(u => String(u.id) === id && u !== selectedEmp);
             if (duplicate) {
@@ -160,17 +185,14 @@ function sctEmployees() {
                 return;
             }
 
-            const email = emailInput.value.trim();
-            if (!isValidEmail(email)) {
-                showError("Please enter a valid email address.");
-                return;
-            }
             if (panelMode === "edit") {
                 selectedEmp.id = Number(id);
                 selectedEmp.name = nameInput.value;
                 selectedEmp.username = usernameInput.value;
                 selectedEmp.address = addressInput.value;
                 selectedEmp.email = email;
+                selectedEmp.phone = phoneInput.value;
+                selectedEmp.website = websiteInput.value;
             } else {
                 employees.push({
                     //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
@@ -178,7 +200,9 @@ function sctEmployees() {
                     name: nameInput.value,
                     username: usernameInput.value,
                     address: addressInput.value,
-                    email: email
+                    email: email,
+                    phone : phoneInput.value,
+                    website : websiteInput.value
                 });
             }
             closePanel();
@@ -188,9 +212,9 @@ function sctEmployees() {
         panel.appendChild(buttonRow);
         return panel;
     }
-    
+
     function showEmployees() {
-        
+
         // my container
         const div = document.getElementById("container");
         div.innerHTML = "";
@@ -214,7 +238,6 @@ function sctEmployees() {
         table.style.borderCollapse = "collapse";
         table.style.fontFamily = "Roboto";
         console.log('Fahim`s', table);
-
 
         // Add button
         const addButton = document.createElement("button");
@@ -246,7 +269,9 @@ function sctEmployees() {
                         <th>Name</th>
                         <th>Username</th>
                           <th>Address</th>
-                        <th>Email</th>
+                             <th>Email</th>
+                            <th>Phone</th>
+                        <th>Website</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -268,7 +293,7 @@ function sctEmployees() {
         employees.forEach(function (emp) {
             const row = document.createElement("tr");
 
-            ["id", "name", "username", "address", "email"].forEach(function (key) {
+            ["id", "name", "username", "address", "email", "phone", "website"].forEach(function (key) {
                 const td = document.createElement("td");
                 td.textContent = emp[key];
                 row.appendChild(td);
@@ -309,7 +334,6 @@ function sctEmployees() {
             row.appendChild(action);
             tbody.appendChild(row);
         });
-
 
         // cell styling
 
@@ -353,8 +377,11 @@ function sctEmployees() {
                     id: user.id,
                     name: user.name,
                     username: user.username,
-                    address: `${user.address.street}, ${user.address.city}`,
-                    email: user.email
+                    address: `${user.address.street}, ${user.address.city},`,
+                    email: user.email,
+                    phone: user.phone,
+                    website: user.website,
+
                 };
             });
             loadingMessage = "";
