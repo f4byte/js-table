@@ -1,3 +1,4 @@
+
 function sctEmployees() {
     let employees = [];
     let loadingMessage = "Loading users...";
@@ -47,6 +48,7 @@ function sctEmployees() {
         const input = document.createElement("input");
         input.type = "text";
         input.value = value;
+
         input.style.width = "100%";
         input.style.boxSizing = "border-box";
 
@@ -92,9 +94,18 @@ function sctEmployees() {
             panel.appendChild(message);
 
             const confirmButton = makeButton("Delete", "red");
+
             confirmButton.onclick = function () {
-                employees = employees.filter(u => u !== selectedEmp);
-                closePanel();
+                fetch("https://jsonplaceholder.typicode.com/users/" + selectedEmp.id, {
+                    method: "DELETE"
+                }) 
+                .then(function () { 
+                    employees = employees.filter(u => u !== selectedEmp);
+                    closePanel();
+                })
+                .catch(function () {
+                    alert ("Failed to delete employee. Try again.");
+                });
             };
 
             buttonRow.appendChild(confirmButton);
@@ -186,23 +197,47 @@ function sctEmployees() {
             }
 
             if (panelMode === "edit") {
+                fetch("https://jsonplaceholder.typicode.com/users/" + selectedEmp.id, {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json" },
+                    body: JSON.stringify({ id: Number(id), name: name, username: username, address: address, email: email, phone: phone, website: website })
+                })
+                .then(function () {
                 selectedEmp.id = Number(id);
-                selectedEmp.name = nameInput.value;
-                selectedEmp.username = usernameInput.value;
-                selectedEmp.address = addressInput.value;
+                selectedEmp.name = name;
+                selectedEmp.username = username;
+                selectedEmp.address = address;
                 selectedEmp.email = email;
-                selectedEmp.phone = phoneInput.value;
-                selectedEmp.website = websiteInput.value;
+                selectedEmp.phone = phone;
+                selectedEmp.website = website;
+                closePanel();
+            })
+            .catch(function () {
+                showError("Could not save. Try again.");
+            });
             } else {
-                employees.push({
-                    //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
-                    id: Number(id), // Add the new employee to the employees array
-                    name: nameInput.value,
-                    username: usernameInput.value,
-                    address: addressInput.value,
-                    email: email,
-                    phone : phoneInput.value,
-                    website : websiteInput.value
+                const newEmp = {id: Number(id), name: name, username: username, address: address, email: email, phone: phone, website: website};
+
+                fetch("https://jsonplaceholder.typicode.com/users" , {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(newEmp)
+            })
+                    .then(function() {
+                        employees.push(newEmp);
+                        closePanel();
+                    })
+                    .catch(function() {
+                        showError("Could not add. try again.");
+                // employees.push({
+                //     //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
+                //     id: Number(id), // Add the new employee to the employees array
+                //     name: nameInput.value,
+                //     username: usernameInput.value,
+                //     address: addressInput.value,
+                //     email: email,
+                //     phone : phoneInput.value,
+                //     website : websiteInput.value
                 });
             }
             closePanel();
