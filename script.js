@@ -11,7 +11,7 @@ function sctEmployees() {
         return /^[0-9]+$/.test(id);
     }
     function isValidName(name) {
-        return /^[A-Za-z\s]+$/.test(name);
+        return /^[A-Za-z\s.]+$/.test(name);
     }
     function isValidUsername(username) {
         return /^[A-Za-z0-9._]+$/.test(username);
@@ -23,7 +23,7 @@ function sctEmployees() {
         return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(email);
     }
     function isValidPhone(phone) {
-        return /^[0-9\s()+-]+$/.test(phone);
+        return /^[0-9\s()+.\-x]+$/i.test(phone);
     }
     function isValidWebsite(website) {
         return /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(website);
@@ -39,7 +39,6 @@ function sctEmployees() {
         btn.style.marginRight = "5px";
         return btn;
     }
-
     function makeInput(panel, labelText, value) {
         const label = document.createElement("div");
         label.textContent = labelText;
@@ -99,7 +98,8 @@ function sctEmployees() {
                 fetch("https://jsonplaceholder.typicode.com/users/" + selectedEmp.id, {
                     method: "DELETE"
                 }) 
-                .then(function () { 
+                .then(function (res) { 
+                    if (!res.ok)throw new Error("Status" + res.status);
                     employees = employees.filter(u => u !== selectedEmp);
                     closePanel();
                 })
@@ -197,33 +197,36 @@ function sctEmployees() {
             }
 
             if (panelMode === "edit") {
-                fetch("https://jsonplaceholder.typicode.com/users/" + selectedEmp.id, {
+                const target = selectedEmp;
+                fetch("https://jsonplaceholder.typicode.com/users/" + target.id, {
                     method: "PUT",
                     headers: {"Content-Type": "application/json" },
-                    body: JSON.stringify({ id: Number(id), name: name, username: username, address: address, email: email, phone: phone, website: website })
+                    body: JSON.stringify({ id: Number(id), name, username, address, email, phone, website })
                 })
-                .then(function () {
-                selectedEmp.id = Number(id);
-                selectedEmp.name = name;
-                selectedEmp.username = username;
-                selectedEmp.address = address;
-                selectedEmp.email = email;
-                selectedEmp.phone = phone;
-                selectedEmp.website = website;
+                .then(function (res) {
+                    if (!res.ok) throw new Error("Status" + res.status);
+                    Object.assign(target, {id: Number(id), name, username, address, email, phone, website });
+                // selectedEmp.id = Number(id);
+                // selectedEmp.name = name;
+                // selectedEmp.username = username;
+                // selectedEmp.address = address;
+                // selectedEmp.email = email;
+                // selectedEmp.phone = phone;
+                // selectedEmp.website = website;
                 closePanel();
             })
             .catch(function () {
                 showError("Could not save. Try again.");
             });
             } else {
-                const newEmp = {id: Number(id), name: name, username: username, address: address, email: email, phone: phone, website: website};
-
+                const newEmp = {id: Number(id), name, username, address, email, phone, website};
                 fetch("https://jsonplaceholder.typicode.com/users" , {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(newEmp)
             })
-                    .then(function() {
+                    .then(function(res) {
+                        if(!res.ok) throw new Error("Status" + res.status);
                         employees.push(newEmp);
                         closePanel();
                     })
@@ -240,7 +243,6 @@ function sctEmployees() {
                 //     website : websiteInput.value
                 });
             }
-            closePanel();
         };
         buttonRow.appendChild(saveButton);
         buttonRow.appendChild(closeButton);
