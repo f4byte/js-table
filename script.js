@@ -217,14 +217,18 @@ function sctEmployees() {
 
             if (panelMode === "edit") {
                 const target = selectedEmp;
-                fetch("https://jsonplaceholder.typicode.com/users/" + target.id, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: Number(id), name, username, address, email, phone, website })
-                })
-                    .then(function (res) {
-                        if (!res.ok) throw new Error("Status" + res.status);
-                        Object.assign(target, { id: Number(id), name, username, address, email, phone, website });
+                const updatedEmp = {id: Number(id),name,username,address,email,phone,website};
+
+                api.update(target.id,updatedEmp)
+                .then(function (res) {
+                    Object.assign(target, {target,updatedEmp});
+                    closePanel();
+                //fetch("https://jsonplaceholder.typicode.com/users/" + target.id, {
+                    //method: "PUT",
+                    //headers: { "Content-Type": "application/json" },
+                    //body: JSON.stringify({ id: Number(id), name, username, address, email, phone, website })
+                
+                        //if (!res.ok) throw new Error("Status" + res.status);
                         // selectedEmp.id = Number(id);
                         // selectedEmp.name = name;
                         // selectedEmp.username = username;
@@ -232,7 +236,6 @@ function sctEmployees() {
                         // selectedEmp.email = email;
                         // selectedEmp.phone = phone;
                         // selectedEmp.website = website;
-                        closePanel();
                     })
                     .catch(function () {
                         showError("Could not save. Try again.");
