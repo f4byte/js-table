@@ -430,12 +430,13 @@ function sctEmployees() {
         showEmployees();
 
         try {
-            const response = await fetch("https://jsonplaceholder.typicode.com/users");
-            if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
-            }
+            const users = await api.getAll();
+            // const response = await fetch("https://jsonplaceholder.typicode.com/users");
+            // if (!response.ok) {
+            //     throw new Error(`Request failed with status ${response.status}`);
+            // }
 
-            const users = await response.json();
+            // const users = await response.json();
             employees = users.map(function (user) {
                 return {
                     id: user.id,
