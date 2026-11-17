@@ -25,7 +25,7 @@ function sctEmployees() {
         remove: function (id)       { return request(API_URL + "/" + id, "DELETE"); }
     };
 
-    
+
     // regex
     function isValidId(id) {
         return /^[0-9]+$/.test(id);
@@ -115,12 +115,11 @@ function sctEmployees() {
             const confirmButton = makeButton("Delete", "red");
 
             confirmButton.onclick = function () {
-                fetch("https://jsonplaceholder.typicode.com/users/" + selectedEmp.id, {
-                    method: "DELETE"
-                })
-                    .then(function (res) {
-                        if (!res.ok) throw new Error("Status" + res.status);
+                api.remove(selectedEmp.id)
+                    .then(function () {
                         employees = employees.filter(u => u !== selectedEmp);
+                        // if (!res.ok) throw new Error("Status" + res.status);
+                        // employees = employees.filter(u => u !== selectedEmp);
                         closePanel();
                     })
                     .catch(function () {
