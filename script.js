@@ -19,10 +19,10 @@ function sctEmployees() {
         return res.json();
     }
     const api = {
-        getAll: function ()         { return request(API_URL, "GET"); },
-        create: function (emp)      { return request(API_URL, "POST", emp); },
-        update: function (id, emp)  { return request(API_URL + "/" + id, "PUT", emp); },
-        remove: function (id)       { return request(API_URL + "/" + id, "DELETE"); }
+        getAll: function () { return request(API_URL, "GET"); },
+        create: function (emp) { return request(API_URL, "POST", emp); },
+        update: function (id, emp) { return request(API_URL + "/" + id, "PUT", emp); },
+        remove: function (id) { return request(API_URL + "/" + id, "DELETE"); }
     };
 
 
@@ -217,17 +217,17 @@ function sctEmployees() {
 
             if (panelMode === "edit") {
                 const target = selectedEmp;
-                const updatedEmp = {id: Number(id),name,username,address,email,phone,website};
+                const updatedEmp = { id: Number(id), name, username, address, email, phone, website };
 
-                api.update(target.id,updatedEmp)
-                .then(function (res) {
-                    Object.assign(target, {target,updatedEmp});
-                    closePanel();
-                //fetch("https://jsonplaceholder.typicode.com/users/" + target.id, {
-                    //method: "PUT",
-                    //headers: { "Content-Type": "application/json" },
-                    //body: JSON.stringify({ id: Number(id), name, username, address, email, phone, website })
-                
+                api.update(target.id, updatedEmp)
+                    .then(function (res) {
+                        Object.assign(target, { target, updatedEmp });
+                        closePanel();
+                        //fetch("https://jsonplaceholder.typicode.com/users/" + target.id, {
+                        //method: "PUT",
+                        //headers: { "Content-Type": "application/json" },
+                        //body: JSON.stringify({ id: Number(id), name, username, address, email, phone, website })
+
                         //if (!res.ok) throw new Error("Status" + res.status);
                         // selectedEmp.id = Number(id);
                         // selectedEmp.name = name;
@@ -242,28 +242,33 @@ function sctEmployees() {
                     });
             } else {
                 const newEmp = { id: Number(id), name, username, address, email, phone, website };
-                fetch("https://jsonplaceholder.typicode.com/users", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newEmp)
-                })
-                    .then(function (res) {
-                        if (!res.ok) throw new Error("Status" + res.status);
+
+                api.create(newEmp)
+                    .then(function () {
                         employees.push(newEmp);
                         closePanel();
-                    })
-                    .catch(function () {
-                        showError("Could not add. try again.");
-                        // employees.push({
-                        //     //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
-                        //     id: Number(id), // Add the new employee to the employees array
-                        //     name: nameInput.value,
-                        //     username: usernameInput.value,
-                        //     address: addressInput.value,
-                        //     email: email,
-                        //     phone : phoneInput.value,
-                        //     website : websiteInput.value
-                    });
+                //fetch("https://jsonplaceholder.typicode.com/users", {
+                    //ethod: "POST",
+                    //headers: { "Content-Type": "application/json" },
+                    //body: JSON.stringify(newEmp)
+                // })
+                //     .then(function (res) {
+                //         if (!res.ok) throw new Error("Status" + res.status);
+                //         employees.push(newEmp);
+                //         closePanel();
+                     })
+                    .catch (function () {
+                            showError("Could not add. try again.");
+                            // employees.push({
+                            //     //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
+                            //     id: Number(id), // Add the new employee to the employees array
+                            //     name: nameInput.value,
+                            //     username: usernameInput.value,
+                            //     address: addressInput.value,
+                            //     email: email,
+                            //     phone : phoneInput.value,
+                            //     website : websiteInput.value
+                        });
             }
         };
         buttonRow.appendChild(saveButton);
