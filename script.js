@@ -7,10 +7,10 @@ function sctEmployees() {
 
     const API_URL = "https://jsonplaceholder.typicode.com/users";
 
-    asyn function request(url, method, data) {
+    async function request(url, method, data) {
         const options = {
-            method = method,
-            headers = { "Content-Type": "application/json" }
+            method : method,
+            headers : { "Content-Type": "application/json" }
         };
         if (data) options.body = JSON.stringify(data);
 
@@ -109,7 +109,7 @@ function sctEmployees() {
             title.textContent = "Delete Employee";
 
             const message = document.createElement("p");
-            message.textContent = "Are you sure you want to delete but why " + selectedEmp.name + "?";
+            message.textContent = "Are you sure you want to delete " + selectedEmp.name + "?";
             panel.appendChild(message);
 
             const confirmButton = makeButton("Delete", "red");
@@ -118,8 +118,7 @@ function sctEmployees() {
                 api.remove(selectedEmp.id)
                     .then(function () {
                         employees = employees.filter(u => u !== selectedEmp);
-                        // if (!res.ok) throw new Error("Status" + res.status);
-                        // employees = employees.filter(u => u !== selectedEmp);
+                        
                         closePanel();
                     })
                     .catch(function () {
@@ -221,21 +220,8 @@ function sctEmployees() {
 
                 api.update(target.id, updatedEmp)
                     .then(function (res) {
-                        Object.assign(target, { target, updatedEmp });
+                        Object.assign(target, updatedEmp);
                         closePanel();
-                        //fetch("https://jsonplaceholder.typicode.com/users/" + target.id, {
-                        //method: "PUT",
-                        //headers: { "Content-Type": "application/json" },
-                        //body: JSON.stringify({ id: Number(id), name, username, address, email, phone, website })
-
-                        //if (!res.ok) throw new Error("Status" + res.status);
-                        // selectedEmp.id = Number(id);
-                        // selectedEmp.name = name;
-                        // selectedEmp.username = username;
-                        // selectedEmp.address = address;
-                        // selectedEmp.email = email;
-                        // selectedEmp.phone = phone;
-                        // selectedEmp.website = website;
                     })
                     .catch(function () {
                         showError("Could not save. Try again.");
@@ -247,27 +233,10 @@ function sctEmployees() {
                     .then(function () {
                         employees.push(newEmp);
                         closePanel();
-                //fetch("https://jsonplaceholder.typicode.com/users", {
-                    //ethod: "POST",
-                    //headers: { "Content-Type": "application/json" },
-                    //body: JSON.stringify(newEmp)
-                // })
-                //     .then(function (res) {
-                //         if (!res.ok) throw new Error("Status" + res.status);
-                //         employees.push(newEmp);
-                //         closePanel();
                      })
                     .catch (function () {
                             showError("Could not add. try again.");
-                            // employees.push({
-                            //     //id:employees.length > 0 ? Math.max(...employees.map(u => u.id)) + 1 : 1,    //[for the id auto increment]
-                            //     id: Number(id), // Add the new employee to the employees array
-                            //     name: nameInput.value,
-                            //     username: usernameInput.value,
-                            //     address: addressInput.value,
-                            //     email: email,
-                            //     phone : phoneInput.value,
-                            //     website : websiteInput.value
+                            
                         });
             }
         };
@@ -285,7 +254,7 @@ function sctEmployees() {
         div.style.display = "flex";
         div.style.flexDirection = "row-reverse";
         div.style.gap = "20px";
-        div.style.allignItems = "flex-start";
+        div.style.alignItems = "flex-start";
 
         const leftSide = document.createElement("div");
         leftSide.style.flex = "1";
@@ -431,12 +400,6 @@ function sctEmployees() {
 
         try {
             const users = await api.getAll();
-            // const response = await fetch("https://jsonplaceholder.typicode.com/users");
-            // if (!response.ok) {
-            //     throw new Error(`Request failed with status ${response.status}`);
-            // }
-
-            // const users = await response.json();
             employees = users.map(function (user) {
                 return {
                     id: user.id,
